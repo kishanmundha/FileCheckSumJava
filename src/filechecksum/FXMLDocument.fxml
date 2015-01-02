@@ -18,7 +18,7 @@
             <TableView VBox.vgrow="ALWAYS">
                 <columns>
                     <TableColumn text="Message"></TableColumn>
-                    <TableColumn text="Path" maxWidth="10000"></TableColumn>
+                    <TableColumn text="Path" maxWidth="10000" minWidth="200" ></TableColumn>
                 </columns>
             </TableView>
             <ProgressBar></ProgressBar>
