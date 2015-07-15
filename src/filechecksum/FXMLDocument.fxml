@@ -38,7 +38,7 @@
                    </columns>
                </TableView>
             <Label fx:id="label" alignment="TOP_LEFT" minHeight="-Infinity" text="Label" />
-               <ProgressBar maxWidth="1.7976931348623157E308" progress="0.21" />
+               <ProgressBar fx:id="progressBar" maxWidth="1.7976931348623157E308" progress="0.0" />
             <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                <children>
                   <CheckBox fx:id="CheckBoxCheckOnly" mnemonicParsing="false" selected="true" text="Check Only" />

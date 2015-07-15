@@ -20,12 +20,16 @@ import java.nio.file.Paths;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -36,6 +40,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
@@ -64,6 +69,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML private TableView TableViewDisplayList;
     @FXML private TableColumn columnMessage;
     @FXML private TableColumn columnPath;
+    @FXML private ProgressBar progressBar;
 
     ObservableList<DisplayListItem> list;
     
@@ -86,7 +92,43 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void handleButtonRunAction(ActionEvent event) {
         list.clear();
-        ScanDirectory(TextFieldDirectory.getText());
+        //ScanDirectory(TextFieldDirectory.getText());
+
+        final Timer timer = new Timer();
+        
+        Thread t = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                // Clear old value (May be take time to get new value)
+                TotalBytes = 0;
+                BytePassed = 0;
+
+                showlabelmsg(String.format("Calculating total size..."));
+
+                TotalBytes = GetDirectorySize(TextFieldDirectory.getText());
+
+                ScanDirectory(TextFieldDirectory.getText());
+                
+                setProgressValue(100);
+                
+                timer.cancel();
+            }
+        });
+        t.start();
+        
+        timer.scheduleAtFixedRate(new TimerTask() {
+
+            @Override
+            public void run() {
+                if(TotalBytes == 0) {
+                    setProgressValue(-1);
+                }
+                else {
+                    setProgressValue((int)Math.max(Math.min(100, (BytePassed * 100) / TotalBytes), 0));
+                }
+            }
+        }, 1000, 1000);
     }
 
     @Override
@@ -441,8 +483,15 @@ public class FXMLDocumentController implements Initializable {
         addListItem(msg, path, Color.BLACK);
     }
 
-    private void addListItem(String msg, String path, Color color) {
-        list.add(new DisplayListItem(msg, path, color));
+    private void addListItem(final String msg, final String path, final Color color) {
+        //list.add(new DisplayListItem(msg, path, color));
+        
+        Platform.runLater(new Runnable() {
+            @Override public void run() {
+                list.add(new DisplayListItem(msg, path, color));
+            }
+        });
+
         /*
          ListViewItem liv = new ListViewItem(msg);
          liv.SubItems.Add(path);
@@ -466,8 +515,16 @@ public class FXMLDocumentController implements Initializable {
      * Show current message
      * @param msg Message
      */
-    private void showlabelmsg(String msg) {
-        label.setText(msg);
+    private void showlabelmsg(final String msg) {
+
+        //label.setText(msg);
+        
+        Platform.runLater(new Runnable() {
+            @Override public void run() {
+                label.setText(msg);
+            }
+        });
+
         /*
         if (!labelStatus.InvokeRequired)
         {
@@ -481,6 +538,19 @@ public class FXMLDocumentController implements Initializable {
             }));
         }
         */
+    }
+    
+    private void setProgressValue(final int p) {
+        Platform.runLater(new Runnable() {
+            @Override public void run() {
+                if(p < 0) {
+                    progressBar.setProgress(0);
+                }
+                else {
+                    progressBar.setProgress((double)p / (double)100);
+                }
+            }
+        });
     }
     
     private String getFileExtension(File file) {
