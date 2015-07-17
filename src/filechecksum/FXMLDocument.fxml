@@ -37,6 +37,15 @@
                        <TableColumn fx:id="columnPath" maxWidth="1.7976931348623157E308" minWidth="80.0" prefWidth="200.0" text="Path" />
                    </columns>
                </TableView>
+           </children>
+         <BorderPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" />
+         </BorderPane.margin>
+        </VBox>
+    </center>
+   <bottom>
+      <VBox prefHeight="67.0" prefWidth="412.0" spacing="10.0" BorderPane.alignment="CENTER">
+         <children>
             <Label fx:id="label" alignment="TOP_LEFT" minHeight="-Infinity" text="Label" />
                <ProgressBar fx:id="progressBar" maxWidth="1.7976931348623157E308" progress="0.0" />
             <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
@@ -48,12 +57,12 @@
                   <Insets />
                </VBox.margin>
             </HBox>
-           </children>
+         </children>
          <BorderPane.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" />
          </BorderPane.margin>
-        </VBox>
-    </center>
+      </VBox>
+   </bottom>
 <!--
     <children>
         <Button layoutX="126" layoutY="90" text="Click Me!" onAction="#handleButtonAction" fx:id="button" />
